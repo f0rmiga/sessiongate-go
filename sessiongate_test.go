@@ -209,6 +209,45 @@ func TestPGet(t *testing.T) {
 		}
 	})
 
+	t.Run("Should fail for a name not set", func(t *testing.T) {
+		name := []byte("user")
+		_, err := sessiongate.PGet(token, name)
+		if err == nil {
+			t.Error(errors.New("Name not set should produce an error"))
+		}
+	})
+
+	t.Run("Should fail for expired sessions", func(t *testing.T) {
+		sessiongate2, token2, err := createSession()
+		if err != nil {
+			t.Error(err)
+		}
+
+		name := []byte("user")
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err = sessiongate2.PSet(token2, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		_, err = sessiongate2.PGet(token2, name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate2.Expire(token2, 1)
+		if err != nil {
+			t.Error(err)
+		}
+
+		time.Sleep(time.Millisecond * 1050)
+
+		_, err = sessiongate2.PGet(token2, name)
+		if err == nil {
+			t.Error(errors.New("Expired session should produce an error"))
+		}
+	})
+
 	t.Run("Should succeed with a JSON string as a payload", func(t *testing.T) {
 		name := []byte("user")
 		payload := []byte("{\"name\":\"John Doe\"}")
