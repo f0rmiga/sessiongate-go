@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/f0rmiga/sessiongate-go.svg?branch=master)](http://travis-ci.org/f0rmiga/sessiongate-go)
+
 # SessionGate driver for the Go language
 
 Driver for the SessionGate Redis module for easy session management in the Go language.
