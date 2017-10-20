@@ -117,3 +117,12 @@ func (sessiongate *Sessiongate) PDel(token, name []byte) error {
 	_, err := conn.Do("SESSIONGATE.PDEL", sessiongate.signKey, token, name)
 	return err
 }
+
+// End ends a session in the SessionGate module
+func (sessiongate *Sessiongate) End(token []byte) error {
+	conn := sessiongate.redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SESSIONGATE.END", sessiongate.signKey, token)
+	return err
+}
