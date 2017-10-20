@@ -97,3 +97,43 @@ func TestStart(t *testing.T) {
 		})
 	})
 }
+
+func createSession() (*Sessiongate, []byte, error) {
+	config := &Config{
+		SignKey: signKey,
+	}
+
+	sessiongate, err := NewSessiongate(config)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	token, err := sessiongate.Start(300)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return sessiongate, token, nil
+}
+
+// TestExpire tests the EXPIRE command for the SessionGate module
+func TestExpire(t *testing.T) {
+	sessiongate, token, err := createSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Run("Should fail with negative TTL", func(t *testing.T) {
+		err := sessiongate.Expire(token, -5)
+		if err == nil {
+			t.Error(errors.New("Negative TTL should produce an error"))
+		}
+	})
+
+	t.Run("Should succeed with positive TTL", func(t *testing.T) {
+		err := sessiongate.Expire(token, 500)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
