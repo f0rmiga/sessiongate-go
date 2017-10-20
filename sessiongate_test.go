@@ -137,3 +137,58 @@ func TestExpire(t *testing.T) {
 		}
 	})
 }
+
+// TestPSet tests the PSET command for the SessionGate module
+func TestPSet(t *testing.T) {
+	sessiongate, token, err := createSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Run("Should fail with an empty name", func(t *testing.T) {
+		name := []byte("")
+		payload := []byte("{}")
+		err := sessiongate.PSet(token, name, payload)
+		if err == nil {
+			t.Error(errors.New("Empty name should produce an error"))
+		}
+	})
+
+	t.Run("Should fail with an empty payload", func(t *testing.T) {
+		name := []byte("user")
+		payload := []byte("")
+		err := sessiongate.PSet(token, name, payload)
+		if err == nil {
+			t.Error(errors.New("Empty payload should produce an error"))
+		}
+	})
+
+	t.Run("Should succeed with a JSON string as a payload", func(t *testing.T) {
+		name := []byte("user")
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+		name := make([]byte, 8)
+		rand.Read(name)
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("Should succeed with random bytes in the payload", func(t *testing.T) {
+		name := []byte("user")
+		payload := make([]byte, 128)
+		rand.Read(payload)
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
