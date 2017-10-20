@@ -3,6 +3,7 @@ dist: trusty
 language: go
 go:
   - "1.9.x"
+  - tip
 addons:
   apt:
     sources:
@@ -37,6 +38,10 @@ before_install:
   - sudo make install
   - cd ..
   - redis-server --daemonize yes --loadmodule $(pwd)/sessiongate/lib/sessiongate.so
+  # Install goveralls for code coverage
+  - go get github.com/mattn/goveralls
+after_success:
+  - $GOPATH/bin/goveralls -service=travis-pro
 env:
   global:
     - CC=gcc-7
