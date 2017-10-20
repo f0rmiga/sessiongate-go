@@ -15,8 +15,8 @@ func init() {
 	rand.Read(signKey)
 }
 
-// TestStart tests the START command for the SessionGate module
-func TestStart(t *testing.T) {
+// TestInitializer tests the Sessiongate initializer
+func TestInitializer(t *testing.T) {
 	t.Run("Should fail with missing SignKey", func(t *testing.T) {
 		config := &Config{}
 
@@ -25,7 +25,10 @@ func TestStart(t *testing.T) {
 			t.Fail()
 		}
 	})
+}
 
+// TestStart tests the START command for the SessionGate module
+func TestStart(t *testing.T) {
 	t.Run("Should fail with negative TTL", func(t *testing.T) {
 		config := &Config{
 			SignKey: signKey,
