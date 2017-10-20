@@ -3,6 +3,7 @@ package sessiongate
 import (
 	"crypto/rand"
 	"errors"
+	"reflect"
 	"regexp"
 	"testing"
 	"time"
@@ -189,6 +190,78 @@ func TestPSet(t *testing.T) {
 		err := sessiongate.PSet(token, name, payload)
 		if err != nil {
 			t.Error(err)
+		}
+	})
+}
+
+// TestPGet tests the PGET command for the SessionGate module
+func TestPGet(t *testing.T) {
+	sessiongate, token, err := createSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Run("Should fail with an empty name", func(t *testing.T) {
+		name := []byte("")
+		_, err := sessiongate.PGet(token, name)
+		if err == nil {
+			t.Error(errors.New("Empty name should produce an error"))
+		}
+	})
+
+	t.Run("Should succeed with a JSON string as a payload", func(t *testing.T) {
+		name := []byte("user")
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		payloadPGet, err := sessiongate.PGet(token, name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if reflect.DeepEqual(payload, payloadPGet) == false {
+			t.Error(errors.New("The payloads should be equal"))
+		}
+	})
+
+	t.Run("Should succeed with random bytes in the payload", func(t *testing.T) {
+		name := []byte("user")
+		payload := make([]byte, 128)
+		rand.Read(payload)
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		payloadPGet, err := sessiongate.PGet(token, name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if reflect.DeepEqual(payload, payloadPGet) == false {
+			t.Error(errors.New("The payloads should be equal"))
+		}
+	})
+
+	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+		name := make([]byte, 8)
+		rand.Read(name)
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		payloadPGet, err := sessiongate.PGet(token, name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if reflect.DeepEqual(payload, payloadPGet) == false {
+			t.Error(errors.New("The payloads should be equal"))
 		}
 	})
 }
