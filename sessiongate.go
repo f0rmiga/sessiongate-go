@@ -107,3 +107,13 @@ func (sessiongate *Sessiongate) PGet(token, name []byte) ([]byte, error) {
 
 	return r.([]byte), nil
 }
+
+// PDel deletes a payload for a session in the SessionGate module
+// name is the payload name to be used to delete
+func (sessiongate *Sessiongate) PDel(token, name []byte) error {
+	conn := sessiongate.redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SESSIONGATE.PDEL", sessiongate.signKey, token, name)
+	return err
+}
