@@ -41,7 +41,7 @@ before_install:
   # Install goveralls for code coverage
   - go get github.com/mattn/goveralls
 after_success:
-  - $GOPATH/bin/goveralls -service=travis-pro
+  - $GOPATH/bin/goveralls -service=travis-ci
 env:
   global:
     - CC=gcc-7
