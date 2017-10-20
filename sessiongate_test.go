@@ -173,7 +173,7 @@ func TestPSet(t *testing.T) {
 		}
 	})
 
-	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+	t.Run("Should succeed with arbitrary bytes in the name", func(t *testing.T) {
 		name := make([]byte, 8)
 		rand.Read(name)
 		payload := []byte("{\"name\":\"John Doe\"}")
@@ -183,7 +183,7 @@ func TestPSet(t *testing.T) {
 		}
 	})
 
-	t.Run("Should succeed with random bytes in the payload", func(t *testing.T) {
+	t.Run("Should succeed with arbitrary bytes in the payload", func(t *testing.T) {
 		name := []byte("user")
 		payload := make([]byte, 128)
 		rand.Read(payload)
@@ -266,7 +266,7 @@ func TestPGet(t *testing.T) {
 		}
 	})
 
-	t.Run("Should succeed with random bytes in the payload", func(t *testing.T) {
+	t.Run("Should succeed with arbitrary bytes in the payload", func(t *testing.T) {
 		name := []byte("user")
 		payload := make([]byte, 128)
 		rand.Read(payload)
@@ -285,7 +285,7 @@ func TestPGet(t *testing.T) {
 		}
 	})
 
-	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+	t.Run("Should succeed with arbitrary bytes in the name", func(t *testing.T) {
 		name := make([]byte, 8)
 		rand.Read(name)
 		payload := []byte("{\"name\":\"John Doe\"}")
@@ -373,7 +373,7 @@ func TestPDel(t *testing.T) {
 		}
 	})
 
-	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+	t.Run("Should succeed with arbitrary bytes in the name", func(t *testing.T) {
 		name := make([]byte, 8)
 		rand.Read(name)
 		payload := []byte("{\"name\":\"John Doe\"}")
