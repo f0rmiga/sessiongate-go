@@ -304,3 +304,87 @@ func TestPGet(t *testing.T) {
 		}
 	})
 }
+
+// TestPDel tests the PDEL command for the SessionGate module
+func TestPDel(t *testing.T) {
+	sessiongate, token, err := createSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Run("Should fail with an empty name", func(t *testing.T) {
+		name := []byte("")
+		err := sessiongate.PDel(token, name)
+		if err == nil {
+			t.Error(errors.New("Empty name should produce an error"))
+		}
+	})
+
+	t.Run("Should fail for a name not set", func(t *testing.T) {
+		name := []byte("user")
+		err := sessiongate.PDel(token, name)
+		if err == nil {
+			t.Error(errors.New("Name not set should produce an error"))
+		}
+	})
+
+	t.Run("Should fail for expired sessions", func(t *testing.T) {
+		sessiongate2, token2, err := createSession()
+		if err != nil {
+			t.Error(err)
+		}
+
+		name := []byte("user")
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err = sessiongate2.PSet(token2, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		_, err = sessiongate2.PGet(token2, name)
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate2.Expire(token2, 1)
+		if err != nil {
+			t.Error(err)
+		}
+
+		time.Sleep(time.Millisecond * 1050)
+
+		err = sessiongate2.PDel(token2, name)
+		if err == nil {
+			t.Error(errors.New("Expired session should produce an error"))
+		}
+	})
+
+	t.Run("Should succeed with a UTF-8 name", func(t *testing.T) {
+		name := []byte("user")
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate.PDel(token, name)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("Should succeed with random bytes in the name", func(t *testing.T) {
+		name := make([]byte, 8)
+		rand.Read(name)
+		payload := []byte("{\"name\":\"John Doe\"}")
+		err := sessiongate.PSet(token, name, payload)
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate.PDel(token, name)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
