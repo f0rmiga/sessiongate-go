@@ -74,3 +74,12 @@ func (sessiongate *Sessiongate) Start(ttl int) ([]byte, error) {
 
 	return r.([]byte), nil
 }
+
+// Expire sets the TTL for a session in the SessionGate module
+func (sessiongate *Sessiongate) Expire(token []byte, ttl int) error {
+	conn := sessiongate.redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SESSIONGATE.EXPIRE", sessiongate.signKey, token, ttl)
+	return err
+}
