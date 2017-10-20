@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/f0rmiga/sessiongate-go.svg?branch=master)](http://travis-ci.org/f0rmiga/sessiongate-go)
+[![Coverage Status](https://coveralls.io/repos/github/f0rmiga/sessiongate-go/badge.svg?branch=master)](https://coveralls.io/github/f0rmiga/sessiongate-go?branch=master)
 
 # SessionGate driver for the Go language
 
