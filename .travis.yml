@@ -1,0 +1,43 @@
+sudo: required
+dist: trusty
+language: go
+go:
+  - "1.9.x"
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-7
+before_install:
+  # Compile and install SessionGate dependency
+  - wget https://download.libsodium.org/libsodium/releases/libsodium-stable-2017-10-20.tar.gz
+  - tar zxf libsodium-stable-2017-10-20.tar.gz
+  - cd libsodium-stable
+  - ./configure --disable-pie
+  - make
+  - make check
+  - sudo make install
+  - cd ..
+  - rm -rf libsodium-stable
+  - rm libsodium-stable-2017-10-20.tar.gz
+  # Compile SessionGate module
+  - git clone https://github.com/f0rmiga/sessiongate
+  - cd sessiongate
+  - git submodule update --init --recursive
+  - ./bootstrap.sh
+  - ./build.sh
+  - cd ..
+  # Compile and run Redis 4 with SessionGate loaded
+  - wget https://github.com/antirez/redis/archive/4.0.2.tar.gz
+  - tar zxf 4.0.2.tar.gz
+  - cd redis-4.0.2
+  - make
+  - make test
+  - sudo make install
+  - cd ..
+  - redis-server --daemonize yes --loadmodule $(pwd)/sessiongate/lib/sessiongate.so
+env:
+  global:
+    - CC=gcc-7
+    - CXX=g++-7
