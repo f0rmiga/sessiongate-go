@@ -93,3 +93,17 @@ func (sessiongate *Sessiongate) PSet(token, name, payload []byte) error {
 	_, err := conn.Do("SESSIONGATE.PSET", sessiongate.signKey, token, name, payload)
 	return err
 }
+
+// PGet gets a payload for a session in the SessionGate module
+// name is the payload name
+func (sessiongate *Sessiongate) PGet(token, name []byte) ([]byte, error) {
+	conn := sessiongate.redisPool.Get()
+	defer conn.Close()
+
+	r, err := conn.Do("SESSIONGATE.PGET", sessiongate.signKey, token, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.([]byte), nil
+}
