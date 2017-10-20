@@ -85,7 +85,7 @@ func (sessiongate *Sessiongate) Expire(token []byte, ttl int) error {
 }
 
 // PSet sets a payload for a session in the SessionGate module
-// name is the payload name to be used to get it later
+// name is the payload name to be used to get the payload later
 func (sessiongate *Sessiongate) PSet(token, name, payload []byte) error {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
