@@ -388,3 +388,49 @@ func TestPDel(t *testing.T) {
 		}
 	})
 }
+
+// TestEnd tests the END command for the SessionGate module
+func TestEnd(t *testing.T) {
+	sessiongate, token, err := createSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Run("Should fail with an empty token", func(t *testing.T) {
+		err := sessiongate.End([]byte(""))
+		if err == nil {
+			t.Error(errors.New("Empty token should produce an error"))
+		}
+	})
+
+	t.Run("Should fail for expired sessions", func(t *testing.T) {
+		sessiongate2, token2, err := createSession()
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate2.Expire(token2, 1)
+		if err != nil {
+			t.Error(err)
+		}
+
+		time.Sleep(time.Millisecond * 1050)
+
+		err = sessiongate2.End(token2)
+		if err == nil {
+			t.Error(errors.New("Expired session should produce an error"))
+		}
+	})
+
+	t.Run("Should succeed", func(t *testing.T) {
+		err := sessiongate.End(token)
+		if err != nil {
+			t.Error(err)
+		}
+
+		err = sessiongate.Expire(token, 1)
+		if err == nil {
+			t.Error(errors.New("Expired session should produce an error"))
+		}
+	})
+}
