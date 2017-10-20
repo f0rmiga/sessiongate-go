@@ -11,3 +11,11 @@ https://godoc.org/github.com/f0rmiga/sessiongate-go
 For more information about how the module works, refer to the module repository:
 
 https://github.com/f0rmiga/sessiongate
+
+## How to run the tests
+
+First you need a local running instance of Redis with the SessionGate module loaded (refer to the previous topic).
+
+Then run:
+
+`go test`
