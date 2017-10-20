@@ -17,7 +17,7 @@ before_install:
   - wget https://download.libsodium.org/libsodium/releases/libsodium-stable-2017-10-20.tar.gz
   - tar zxf libsodium-stable-2017-10-20.tar.gz
   - cd libsodium-stable
-  - ./configure
+  - ./configure --disable-pie
   - make
   - make check
   - sudo make install
