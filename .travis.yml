@@ -12,9 +12,9 @@ addons:
       - g++-7
 before_install:
   # Compile and install SessionGate dependency
-  - wget https://download.libsodium.org/libsodium/releases/libsodium-stable-2017-10-20.tar.gz
-  - tar zxf libsodium-stable-2017-10-20.tar.gz
-  - cd libsodium-stable
+  - wget https://github.com/jedisct1/libsodium/releases/download/1.0.15/libsodium-1.0.15.tar.gz
+  - tar zxf libsodium-1.0.15.tar.gz 
+  - cd libsodium-1.0.15
   - ./configure --disable-pie
   - make
   - make check
