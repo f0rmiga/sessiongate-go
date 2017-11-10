@@ -20,8 +20,8 @@ before_install:
   - make check
   - sudo make install
   - cd ..
-  - rm -rf libsodium-stable
-  - rm libsodium-stable-2017-10-20.tar.gz
+  - rm -rf libsodium-1.0.15
+  - rm libsodium-1.0.15.tar.gz
   # Compile SessionGate module
   - git clone https://github.com/f0rmiga/sessiongate
   - cd sessiongate
