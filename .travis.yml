@@ -1,47 +1,46 @@
-sudo: required
 dist: trusty
+
 language: go
+
 go:
-  - "1.8.x"
   - "1.9.x"
+  - "1.10.x"
+
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
       - g++-7
+
 before_install:
-  # Compile and install SessionGate dependency
-  - wget https://github.com/jedisct1/libsodium/releases/download/1.0.15/libsodium-1.0.15.tar.gz
-  - tar zxf libsodium-1.0.15.tar.gz 
-  - cd libsodium-1.0.15
-  - ./configure --disable-pie
-  - make
-  - make check
-  - sudo make install
-  - cd ..
-  - rm -rf libsodium-1.0.15
-  - rm libsodium-1.0.15.tar.gz
-  # Compile SessionGate module
-  - git clone https://github.com/f0rmiga/sessiongate
-  - cd sessiongate
-  - git submodule update --init --recursive
-  - ./bootstrap.sh
-  - ./build.sh
-  - cd ..
-  # Compile and run Redis 4 with SessionGate loaded
-  - wget https://github.com/antirez/redis/archive/4.0.2.tar.gz
-  - tar zxf 4.0.2.tar.gz
-  - cd redis-4.0.2
-  - make
-  - make test
-  - sudo make install
-  - cd ..
-  - redis-server --daemonize yes --loadmodule $(pwd)/sessiongate/lib/sessiongate.so
   # Install goveralls for code coverage
   - go get github.com/mattn/goveralls
+
+  # Install Bazel.
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.11.0/bazel_0.11.0-linux-x86_64.deb
+  - sudo dpkg -i bazel_0.11.0-linux-x86_64.deb
+
+  # Compile and install Redis.
+  - wget https://github.com/antirez/redis/archive/4.0.8.tar.gz
+  - tar zxf 4.0.8.tar.gz
+  - cd redis-4.0.8
+  - make -j4
+  - sudo make install
+  - cd ..
+
+  # Compile the SessionGate module.
+  - git clone https://github.com/f0rmiga/sessiongate
+  - cd sessiongate
+  - bazel build //...
+  - cd ..
+
+  # Run Redis with SessionGate loaded.
+  - redis-server --daemonize yes --loadmodule $(pwd)/sessiongate/bazel-bin/sessiongate.so
+
 after_success:
   - $GOPATH/bin/goveralls -service=travis-ci
+
 env:
   global:
     - CC=gcc-7
