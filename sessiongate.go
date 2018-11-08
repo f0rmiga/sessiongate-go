@@ -15,14 +15,14 @@ type Sessiongate struct {
 	signKey []byte
 }
 
-// NewSessiongate initializes a new Sessiongate
+// NewSessiongate initializes a new Sessiongate.
 func NewSessiongate(config *Config) (*Sessiongate, error) {
 	// Returns an error if SignKey is not set
 	if config.SignKey == nil {
 		return nil, errors.New("SignKey is required for the Sessiongate config")
 	}
 
-	// Sets addr to a default value if it is an empty string
+	// Sets addr to a default value if it is an empty string.
 	var addr string
 	if config.Addr == "" {
 		addr = ":6379"
@@ -30,7 +30,7 @@ func NewSessiongate(config *Config) (*Sessiongate, error) {
 		addr = config.Addr
 	}
 
-	// Sets maxIdle to a default value if it is 0
+	// Sets maxIdle to a default value if it is 0.
 	var maxIdle int
 	if config.MaxIdle == 0 {
 		maxIdle = 3
@@ -38,7 +38,7 @@ func NewSessiongate(config *Config) (*Sessiongate, error) {
 		maxIdle = config.MaxIdle
 	}
 
-	// Sets idleTimeout to a default value if it is 0
+	// Sets idleTimeout to a default value if it is 0.
 	var idleTimeout time.Duration
 	if config.IdleTimeout == 0 {
 		idleTimeout = 240 * time.Second
@@ -48,21 +48,21 @@ func NewSessiongate(config *Config) (*Sessiongate, error) {
 
 	sessiongate := new(Sessiongate)
 
-	// Initialize the Redis connection pool
+	// Initialize the Redis connection pool.
 	sessiongate.redisPool = &redis.Pool{
 		MaxIdle:     maxIdle,
 		IdleTimeout: idleTimeout,
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", addr) },
 	}
 
-	// Sets the SignKey passed to config
+	// Sets the SignKey passed to config.
 	sessiongate.signKey = config.SignKey
 
 	return sessiongate, nil
 }
 
 // Start starts a new session in the SessionGate module and returns the
-// generated token
+// generated token.
 func (sessiongate *Sessiongate) Start(ttl int) ([]byte, error) {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
@@ -75,7 +75,7 @@ func (sessiongate *Sessiongate) Start(ttl int) ([]byte, error) {
 	return r.([]byte), nil
 }
 
-// Expire sets the TTL for a session in the SessionGate module
+// Expire sets the TTL for a session in the SessionGate module.
 func (sessiongate *Sessiongate) Expire(token []byte, ttl int) error {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
@@ -95,7 +95,7 @@ func (sessiongate *Sessiongate) PSet(token, name, payload []byte) error {
 }
 
 // PGet gets a payload for a session in the SessionGate module
-// name is the payload name
+// name is the payload name.
 func (sessiongate *Sessiongate) PGet(token, name []byte) ([]byte, error) {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
@@ -109,7 +109,7 @@ func (sessiongate *Sessiongate) PGet(token, name []byte) ([]byte, error) {
 }
 
 // PDel deletes a payload for a session in the SessionGate module
-// name is the payload name to be used to delete
+// name is the payload name to be used to delete.
 func (sessiongate *Sessiongate) PDel(token, name []byte) error {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
@@ -118,7 +118,7 @@ func (sessiongate *Sessiongate) PDel(token, name []byte) error {
 	return err
 }
 
-// End ends a session in the SessionGate module
+// End ends a session in the SessionGate module.
 func (sessiongate *Sessiongate) End(token []byte) error {
 	conn := sessiongate.redisPool.Get()
 	defer conn.Close()
