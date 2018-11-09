@@ -16,7 +16,7 @@ func init() {
 	rand.Read(signKey)
 }
 
-// TestInitializer tests the Sessiongate initializer
+// TestInitializer tests the Sessiongate initializer.
 func TestInitializer(t *testing.T) {
 	t.Run("Should fail with missing SignKey", func(t *testing.T) {
 		config := &Config{}
@@ -28,7 +28,7 @@ func TestInitializer(t *testing.T) {
 	})
 }
 
-// TestStart tests the START command for the SessionGate module
+// TestStart tests the START command for the SessionGate module.
 func TestStart(t *testing.T) {
 	t.Run("Should fail with negative TTL", func(t *testing.T) {
 		config := &Config{
@@ -117,7 +117,7 @@ func createSession() (*Sessiongate, []byte, error) {
 	return sessiongate, token, nil
 }
 
-// TestExpire tests the EXPIRE command for the SessionGate module
+// TestExpire tests the EXPIRE command for the SessionGate module.
 func TestExpire(t *testing.T) {
 	sessiongate, token, err := createSession()
 	if err != nil {
@@ -139,7 +139,7 @@ func TestExpire(t *testing.T) {
 	})
 }
 
-// TestPSet tests the PSET command for the SessionGate module
+// TestPSet tests the PSET command for the SessionGate module.
 func TestPSet(t *testing.T) {
 	sessiongate, token, err := createSession()
 	if err != nil {
@@ -194,7 +194,7 @@ func TestPSet(t *testing.T) {
 	})
 }
 
-// TestPGet tests the PGET command for the SessionGate module
+// TestPGet tests the PGET command for the SessionGate module.
 func TestPGet(t *testing.T) {
 	sessiongate, token, err := createSession()
 	if err != nil {
@@ -305,7 +305,7 @@ func TestPGet(t *testing.T) {
 	})
 }
 
-// TestPDel tests the PDEL command for the SessionGate module
+// TestPDel tests the PDEL command for the SessionGate module.
 func TestPDel(t *testing.T) {
 	sessiongate, token, err := createSession()
 	if err != nil {
@@ -389,7 +389,7 @@ func TestPDel(t *testing.T) {
 	})
 }
 
-// TestEnd tests the END command for the SessionGate module
+// TestEnd tests the END command for the SessionGate module.
 func TestEnd(t *testing.T) {
 	sessiongate, token, err := createSession()
 	if err != nil {
